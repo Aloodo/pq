@@ -1,0 +1,13 @@
+{
+  "title": "pq",
+  "name": "pq",
+  "version": "0.0.1",
+  "description": "Turn on Tracking Protection",
+  "main": "index.js",
+  "author": "Don Marti",
+  "engines": {
+    "firefox": ">=38.0a1",
+    "fennec": ">=38.0a1"
+  },
+  "license": "MPL-2.0"
+}
