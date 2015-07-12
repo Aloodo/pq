@@ -1,5 +1,8 @@
-#pq
-Turn on Tracking Protection
+#pq: world's simplest tracking protection tool.
+
+This just turns on the Tracking Protection that is already in Firefox.
+
+Easier than going to about:config? Probably for some.
 
 ## Development
 
