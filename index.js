@@ -6,6 +6,13 @@ var window = utils.getMostRecentBrowserWindow();
 
 var tpPref = 'privacy.trackingprotection.enabled';
 
+/* Safe values are 1st-party only: 1
+ *                 No cookies:     2
+ *                 Visited only:   3
+ * Unsafe value is accept all:     0
+ */
+var cookiePref = 'network.cookie.cookieBehavior';
+
 var prompts =
   Cc["@mozilla.org/embedcomp/prompt-service;1"].
       getService(Ci.nsIPromptService);
@@ -13,8 +20,9 @@ var prompts =
 var runTPtest = {value: false};
 
 function checkEnabled(cb) {
-	var value = prefSvc.get(tpPref, false);
-	cb(value);
+	var tp = prefSvc.get(tpPref, false);
+	var cp = prefSvc.get(cookiePref, 0);
+	cb(tp && (cp > 0));
 }
 
 function doConfig(alreadyOn) {
@@ -22,9 +30,14 @@ function doConfig(alreadyOn) {
 		return;
 	}
 	prefSvc.set(tpPref, true);
+	if (prefSvc.get(cookiePref, 0) == 0) {
+	/* only change cookie behavior if wide-open */
+		prefSvc.set(cookiePref, 3);
+	}
 
-	prompts.alertCheck(window, "pq extension",
-	"Firefox Tracking Protection is now enabled. " +
+	prompts.alertCheck(window, "pq",
+	"Firefox Tracking Protection and third-party cookie " +
+	"protection are now enabled. " +
 	"Thank you for helping to protect the web sites " +
 	"you use from data leakage and fraud.",
 	"Run tracking test?", runTPtest);
