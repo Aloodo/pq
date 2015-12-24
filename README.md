@@ -8,7 +8,7 @@ Easier than going to about:config? Probably for some.
 
 Run tests:
 
-	jpm -b /usr/lib64/firefox/firefox test
+	jpm -b /usr/lib64/firefox/firefox --binary-args about:blank test
 
 Run a new Firefox with the current code:
 
