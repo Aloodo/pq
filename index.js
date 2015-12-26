@@ -1,7 +1,9 @@
 var { Cc, Ci } = require('chrome');
+var simpleStorage = require('sdk/simple-storage');
 var utils = require('sdk/window/utils');
 var tabs = require("sdk/tabs");
 var prefSvc = require("sdk/preferences/service");
+var { PrefsTarget } = require("sdk/preferences/event-target");
 var window = utils.getMostRecentBrowserWindow();
 
 var tpPref = 'privacy.trackingprotection.enabled';
@@ -13,22 +15,34 @@ var tpPref = 'privacy.trackingprotection.enabled';
  */
 var cookiePref = 'network.cookie.cookieBehavior';
 
+var pt = PrefsTarget();
+
 var prompts =
   Cc["@mozilla.org/embedcomp/prompt-service;1"].
       getService(Ci.nsIPromptService);
 
 var runTPtest = {value: false};
+var stg = simpleStorage.storage;
 
-function checkEnabled(cb) {
-	var tp = prefSvc.get(tpPref, false);
-	var cp = prefSvc.get(cookiePref, 0);
-	cb(tp && (cp > 0));
-}
 
-function doConfig(alreadyOn) {
-	if (alreadyOn) {
+function doUnload(reason) {
+	if (reason != 'disable') {
 		return;
 	}
+	if (prefSvc.get(cookiePref, 0) == 3) {
+		prefSvc.set(cookiePref, stg[cookiePref]);
+	}
+	prefSvc.set(tpPref, stg[tpPref]);
+}
+
+function checkEnabled() {
+	if (prefSvc.get(tpPref, false) && prefSvc.get(cookiePref, 0) > 0) {
+		return;
+	}
+	doConfig();
+}
+
+function doConfig() {
 	prefSvc.set(tpPref, true);
 	if (prefSvc.get(cookiePref, 0) == 0) {
 	/* only change cookie behavior if wide-open */
@@ -46,6 +60,24 @@ function doConfig(alreadyOn) {
 	}
 }
 
-checkEnabled(doConfig);
+/* Persist original values for preferences */
+if (stg[cookiePref] === undefined) {
+	stg[cookiePref] = prefSvc.get(cookiePref, 0);
+}
+if (stg[tpPref] === undefined) {
+	stg[tpPref] = prefSvc.get(tpPref, false);
+}
+
+checkEnabled();
+
+/* Persist preference changes by user */
+pt.on(cookiePref, function(prefName) {
+	stg[prefName] = prefSvc.get(prefName);
+});
+pt.on(tpPref, function(prefName) {
+	stg[prefName] = prefSvc.get(prefName);
+});
 
 exports.checkEnabled = checkEnabled;
+exports.onUnload = doUnload;
+

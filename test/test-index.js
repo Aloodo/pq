@@ -10,13 +10,6 @@ exports["test main async"] = function(assert, done) {
   done();
 };
 
-exports["test checkEnabled"] = function(assert, done) {
-  main.checkEnabled(function(result) {
-    assert.ok((result === true), "TP enabled");
-    done();
-  });
-};
-
 exports["test cookie policy"] = function(assert, done) {
   assert.notEqual(prefSvc.get('network.cookie.cookieBehavior', 0), 0);
   done();
