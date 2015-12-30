@@ -24,15 +24,17 @@ var prompts =
 var runTPtest = {value: false};
 var stg = simpleStorage.storage;
 
-
 function doUnload(reason) {
 	if (reason != 'disable') {
 		return;
 	}
-	if (prefSvc.get(cookiePref, 0) == 3) {
+	if (stg[cookiePref] != undefined &&
+	    prefSvc.get(cookiePref, 0) == 3) {
 		prefSvc.set(cookiePref, stg[cookiePref]);
 	}
-	prefSvc.set(tpPref, stg[tpPref]);
+	if (stg[tpPref] != undefined) {
+		prefSvc.set(tpPref, stg[tpPref]);
+	}
 }
 
 function checkEnabled() {
