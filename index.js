@@ -7,6 +7,7 @@ var { PrefsTarget } = require("sdk/preferences/event-target");
 var window = utils.getMostRecentBrowserWindow();
 
 var tpPref = 'privacy.trackingprotection.enabled';
+var sessionPref = 'network.cookie.thirdparty.sessionOnly';
 
 /* Safe values are 1st-party only: 1
  *                 No cookies:     2
@@ -32,13 +33,30 @@ function doUnload(reason) {
 	    prefSvc.get(cookiePref, 0) == 3) {
 		prefSvc.set(cookiePref, stg[cookiePref]);
 	}
+	if (stg[sessionPref] != undefined) {
+		prefSvc.set(sessionPref, stg[sessionPref]);
+	}
 	if (stg[tpPref] != undefined) {
 		prefSvc.set(tpPref, stg[tpPref]);
 	}
+	stg = {};
 }
 
 function checkEnabled() {
-	if (prefSvc.get(tpPref, false) && prefSvc.get(cookiePref, 0) > 0) {
+	/* Persist original values for preferences */
+	if (stg[cookiePref] === undefined) {
+		persistPref(cookiePref);
+	}
+	if (stg[sessionPref] === undefined) {
+		persistPref(sessionPref);
+	}
+	if (stg[tpPref] === undefined) {
+		persistPref(tpPref);
+	}
+
+	if (prefSvc.get(tpPref, false) && 
+	    prefSvc.get(sessionPref, false) &&	
+	    prefSvc.get(cookiePref, 0) > 0) {
 		return;
 	}
 	doConfig();
@@ -46,8 +64,9 @@ function checkEnabled() {
 
 function doConfig() {
 	prefSvc.set(tpPref, true);
-	if (prefSvc.get(cookiePref, 0) == 0) {
+	prefSvc.set(sessionPref, true);
 	/* only change cookie behavior if wide-open */
+	if (prefSvc.get(cookiePref, 0) == 0) {
 		prefSvc.set(cookiePref, 3);
 	}
 
@@ -62,23 +81,16 @@ function doConfig() {
 	}
 }
 
-/* Persist original values for preferences */
-if (stg[cookiePref] === undefined) {
-	stg[cookiePref] = prefSvc.get(cookiePref, 0);
-}
-if (stg[tpPref] === undefined) {
-	stg[tpPref] = prefSvc.get(tpPref, false);
+function persistPref(prefName) {
+	stg[prefName] = prefSvc.get(prefName);
 }
 
 checkEnabled();
 
 /* Persist preference changes by user */
-pt.on(cookiePref, function(prefName) {
-	stg[prefName] = prefSvc.get(prefName);
-});
-pt.on(tpPref, function(prefName) {
-	stg[prefName] = prefSvc.get(prefName);
-});
+pt.on(cookiePref, persistPref);
+pt.on(sessionPref, persistPref);
+pt.on(tpPref, persistPref);
 
 exports.checkEnabled = checkEnabled;
 exports.onUnload = doUnload;
