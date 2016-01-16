@@ -18,7 +18,7 @@ var runTPtest = {value: false};
 var stg = simpleStorage.storage;
 
 function doUnload(reason) {
-	if (reason != 'disable') {
+	if (reason != 'disable' && reason != 'uninstall') {
 		return;
 	}
 	if (stg[cookiePref] != undefined &&
