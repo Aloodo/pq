@@ -4,6 +4,12 @@ This just turns on the Tracking Protection that is already in Firefox, and sets 
 
 Easier than going to about:config? Probably for some.
 
+
+## Install on Firefox
+
+Install [pq from the Add-ons for Firefox site](https://addons.mozilla.org/en-US/firefox/addon/pq/).
+
+
 ## Development
 
 Run tests:
