@@ -13,8 +13,6 @@ var sessionPref = 'network.cookie.thirdparty.sessionOnly';
 var cookiePref = 'network.cookie.cookieBehavior';
 
 var pt = PrefsTarget();
-
-var runTPtest = {value: false};
 var stg = simpleStorage.storage;
 
 function doUnload(reason) {
