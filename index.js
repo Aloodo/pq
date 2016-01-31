@@ -2,14 +2,14 @@ var simpleStorage = require('sdk/simple-storage');
 var prefSvc = require("sdk/preferences/service");
 var { PrefsTarget } = require("sdk/preferences/event-target");
 
+/* Safe value for both of these is true. */
 var tpPref = 'privacy.trackingprotection.enabled';
 var sessionPref = 'network.cookie.thirdparty.sessionOnly';
 
-/* Safe values are 1st-party only: 1
- *                 No cookies:     2
- *                 Visited only:   3
- * Unsafe value is accept all:     0
- */
+/* Safe values are 1st-party only: 1 *
+ *                 No cookies:     2 * 
+ *                 Visited only:   3 * 
+ * Unsafe value is accept all:     0 */
 var cookiePref = 'network.cookie.cookieBehavior';
 
 var pt = PrefsTarget();
