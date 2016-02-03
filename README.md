@@ -8,6 +8,8 @@ This Firefox add-on turns on the Tracking Protection already built in to the bro
 
 [Test your browser.](http://www.aloodo.org/test/start/) Are you protected from third-party tracking?
 
+For Google Chrome: [Palmerized Chrome](https://chrome.google.com/webstore/detail/palmerized-chrome/ecmhflkoahhjjpddfopclbhiogelneoc)
+
 ## Development
 
 Run tests:
