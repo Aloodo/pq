@@ -1,7 +1,7 @@
 {
   "title": "pq",
   "name": "pq",
-  "version": "0.1.0",
+  "version": "1.1.0",
   "description": "Turn on Tracking Protection and fix third-party cookie policy.",
   "homepage": "https://github.com/Aloodo/pq",
   "main": "index.js",
